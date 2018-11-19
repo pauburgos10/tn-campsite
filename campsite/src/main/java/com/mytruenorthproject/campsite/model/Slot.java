@@ -5,6 +5,8 @@ import com.mytruenorthproject.campsite.utils.SlotStatus;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -14,22 +16,25 @@ import java.util.Set;
 @Table(name = "slot")
 @Data
 @Builder
-public class Slot {
+@EqualsAndHashCode(exclude={"campsite","reservation"})
+@ToString(exclude = {"campsite", "reservation"})
+public class Slot implements Serializable {
 
     //private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY , optional = false)
     @NonNull
     @JsonIgnore
-    @JoinColumn(name="campsiteId")
+    @JoinColumn(name="campsiteId", nullable = false)
     private Campsite campsite;
 
     @Column(name = "date", nullable = false)
-    private Date date;
+    private LocalDate date;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
@@ -38,7 +43,8 @@ public class Slot {
             mappedBy = "slots")
     private Set<Reservation> reservations;
 
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(32) default 'AVAILABLE'")
+    @Enumerated
+    @Column(name = "status", nullable = false, columnDefinition = "int default 0")
     private SlotStatus status = SlotStatus.AVAILABLE;
 
     @Version

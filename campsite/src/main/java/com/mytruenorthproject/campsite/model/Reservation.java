@@ -1,16 +1,16 @@
 package com.mytruenorthproject.campsite.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mytruenorthproject.campsite.utils.ReservationStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +21,9 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Reservation {
+@EqualsAndHashCode(exclude="slots")
+@ToString(exclude = {"slots"})
+public class Reservation implements Serializable {
 
    //private static final long serialVersionUID = 1L;
 
@@ -57,9 +59,7 @@ public class Reservation {
     @Column(name = "departureDate", nullable = false)
     private LocalDate departureDate;
 
-    @NotNull
-    @Future(message = "Reservation must have at least one slot")
-
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
@@ -74,5 +74,29 @@ public class Reservation {
     @Column(name = "status", nullable = false, columnDefinition = "varchar(32) default 'ACTIVE'")
     private ReservationStatus status = ReservationStatus.ACTIVE;
 
+    @JsonIgnore
+    public boolean isNewRecord() {
+        return this.id == null;
+    }
 
+    @JsonIgnore
+    public boolean isActive() {
+        return this.status == ReservationStatus.ACTIVE;
+    }
+
+    @JsonIgnore
+    public Long getCampsiteId() {
+        if(!slots.isEmpty()){
+            return this.slots.iterator().next().getCampsite().getId();
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public Campsite getCampsite() {
+        if(!slots.isEmpty()){
+            return this.slots.iterator().next().getCampsite();
+        }
+        return null;
+    }
 }

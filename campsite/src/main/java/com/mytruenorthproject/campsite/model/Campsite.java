@@ -1,9 +1,6 @@
 package com.mytruenorthproject.campsite.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
@@ -17,6 +14,8 @@ import java.util.Set;
 @Table(name = "Campsite")
 @Data
 @Builder
+@EqualsAndHashCode(exclude="slots")
+@ToString(exclude = {"slots"})
 public class Campsite implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,7 +28,7 @@ public class Campsite implements Serializable {
     @Column
     private String name;
 
-    @OneToMany(cascade= CascadeType.ALL,mappedBy="campsite")
+    @OneToMany(cascade= CascadeType.ALL,mappedBy="campsite",fetch = FetchType.LAZY)
     private Set<Slot> slots;
 
 }

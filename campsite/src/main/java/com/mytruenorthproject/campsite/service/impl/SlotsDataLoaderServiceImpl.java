@@ -1,9 +1,7 @@
 package com.mytruenorthproject.campsite.service.impl;
 
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.mytruenorthproject.campsite.model.Campsite;
 import com.mytruenorthproject.campsite.model.Slot;
 import com.mytruenorthproject.campsite.repository.CampsiteRepository;
@@ -13,6 +11,8 @@ import com.mytruenorthproject.campsite.utils.HttpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Type;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +28,12 @@ public class SlotsDataLoaderServiceImpl implements SlotsDataLoaderService {
 
     private static final String SLOTS_URL = "https://s3-sa-east-1.amazonaws.com/true-north-campsite-data/slots.json";
     private static final String CAMPSITE_URL = "https://s3-sa-east-1.amazonaws.com/true-north-campsite-data/campsite.json";
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new JsonDeserializer<LocalDate>() {
+        @Override
+        public LocalDate deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            return LocalDate.parse(json.getAsJsonPrimitive().getAsString());
+        }
+    }).create();
 
     @Override
     public void loadCampsiteDataForDemo() {
@@ -35,7 +41,6 @@ public class SlotsDataLoaderServiceImpl implements SlotsDataLoaderService {
         JsonParser parser = new JsonParser();
         JsonElement campsiteJson =  parser.parse(jsonResponse);
 
-        Gson gson = new Gson();
         Campsite campsite = gson.fromJson(campsiteJson, Campsite.class);
         campsiteRepository.save(campsite);
     }
@@ -45,7 +50,7 @@ public class SlotsDataLoaderServiceImpl implements SlotsDataLoaderService {
         String jsonResponse = HttpUtil.performGet(SLOTS_URL);
         JsonParser parser = new JsonParser();
         JsonElement slotsJson =  parser.parse(jsonResponse);
-        Gson gson = new Gson();
+
         List<Slot> slots = Arrays.asList(gson.fromJson(slotsJson, Slot[].class));
         slotRepository.saveAll(slots);
     }
