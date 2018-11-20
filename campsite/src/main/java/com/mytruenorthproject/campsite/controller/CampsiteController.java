@@ -1,6 +1,7 @@
 package com.mytruenorthproject.campsite.controller;
 
 
+import com.google.common.collect.Sets;
 import com.mytruenorthproject.campsite.model.Reservation;
 import com.mytruenorthproject.campsite.model.Slot;
 import com.mytruenorthproject.campsite.service.base.ReservationService;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/campsite")
@@ -75,6 +77,22 @@ public class CampsiteController {
                 ControllerLinkBuilder.methodOn(this.getClass()).getSlotAvailability(startDate, endDate)).withSelfRel();
         resource.add(selfLink);
         return new ResponseEntity<>(resource, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/slots/{campsiteId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Resources<Slot>> addSlots(@PathVariable() long campsiteId, @RequestBody @Valid Slot[] slots) {
+
+
+        Set<Slot> slotSet = slotService.addSlotsToCampsite(slots, campsiteId);
+        Resources<Slot> resources = new Resources<>(slotSet);
+
+        Link selfLink = ControllerLinkBuilder.linkTo(
+                ControllerLinkBuilder.methodOn(this.getClass()).addSlots(campsiteId, slots)).withSelfRel();
+        resources.add(selfLink);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(selfLink.getHref()));
+        return new ResponseEntity<>(resources,headers, HttpStatus.OK);
     }
 
     @PostMapping(value = "/reservation/{campsite_id}",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

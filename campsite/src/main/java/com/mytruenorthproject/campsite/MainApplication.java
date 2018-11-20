@@ -13,10 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Paula
  */
 @SpringBootApplication
-//public class MainApplication implements ApplicationRunner {
 public class MainApplication {
-    /*@Autowired
-    private SlotsDataLoaderServiceImpl slotsDataLoader;*/
 
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);

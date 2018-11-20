@@ -12,4 +12,5 @@ public interface SlotService {
     List<Slot> getByDate(LocalDate date);
     List<LocalDate> getDatesAvailableByDateRange(LocalDate startDate, LocalDate endDate);
     Set<Slot> getByDateRangeAvailableAndCampsite(LocalDate startDate, LocalDate endDate, long id);
+    Set<Slot> addSlotsToCampsite(Slot[] slots, Long id);
 }

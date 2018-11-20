@@ -119,7 +119,7 @@ public class ReservationServiceImpl implements ReservationService {
         newSlots.stream().forEach(slot -> slot.setStatus(SlotStatus.RESERVED));
         reservationRequest.setSlots(newSlots);
         Reservation saved = reservationRepository.save(reservationRequest);
-        slotRepository.saveAll(newSlots);
+        //slotRepository.saveAll(newSlots);
         return saved;
     }
 

@@ -26,7 +26,5 @@ public interface SlotRepository extends CrudRepository<Slot, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Set<Slot> findByDateBetweenAndStatusAndCampsite(LocalDate startDate, LocalDate endDate, SlotStatus status, Campsite campsite);
 
-    @Query(value = "select s from slot s join slot_reservation_pairs sp where s.id = sp.slot_id and sp.reservation_id = :id", nativeQuery = true)
-    Set<Slot> findByReservation(@Param("id") Long id);
 
 }

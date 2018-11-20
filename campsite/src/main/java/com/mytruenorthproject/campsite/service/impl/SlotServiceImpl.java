@@ -1,6 +1,7 @@
 package com.mytruenorthproject.campsite.service.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import com.mytruenorthproject.campsite.model.Campsite;
 import com.mytruenorthproject.campsite.model.Slot;
 import com.mytruenorthproject.campsite.repository.CampsiteRepository;
@@ -9,8 +10,10 @@ import com.mytruenorthproject.campsite.service.base.SlotService;
 import com.mytruenorthproject.campsite.utils.SlotStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,6 +28,7 @@ public class SlotServiceImpl implements SlotService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public Slot getById(Long id) {
         Optional<Slot> slot = slotRepository.findById(id);
 
@@ -76,4 +80,19 @@ public class SlotServiceImpl implements SlotService {
         Set<Slot> slots = slotRepository.findByDateBetweenAndStatusAndCampsite(startDate,endDate,SlotStatus.AVAILABLE, campsite.get());
         return slots;
     }
+
+    @Override
+    public Set<Slot> addSlotsToCampsite(Slot[] slots, Long id) {
+        Optional<Campsite> campsite = campsiteRepository.findById(id);
+        if (!campsite.isPresent()){
+            throw new RuntimeException("Campsite not found");
+        }
+
+        Set<Slot> slotSet = Sets.newHashSet(slots);
+        slotSet.stream().forEach(slot -> slot.setCampsite(campsite.get()));
+        slotRepository.saveAll(slotSet);
+        return slotSet;
+    }
+
+
 }

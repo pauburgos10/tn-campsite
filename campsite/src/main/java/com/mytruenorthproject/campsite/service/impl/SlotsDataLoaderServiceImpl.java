@@ -50,7 +50,6 @@ public class SlotsDataLoaderServiceImpl implements SlotsDataLoaderService {
         String jsonResponse = HttpUtil.performGet(SLOTS_URL);
         JsonParser parser = new JsonParser();
         JsonElement slotsJson =  parser.parse(jsonResponse);
-
         List<Slot> slots = Arrays.asList(gson.fromJson(slotsJson, Slot[].class));
         slotRepository.saveAll(slots);
     }
