@@ -2,8 +2,10 @@ package com.mytruenorthproject.campsite.controller;
 
 
 import com.google.common.collect.Sets;
+import com.mytruenorthproject.campsite.model.Campsite;
 import com.mytruenorthproject.campsite.model.Reservation;
 import com.mytruenorthproject.campsite.model.Slot;
+import com.mytruenorthproject.campsite.service.base.CampsiteService;
 import com.mytruenorthproject.campsite.service.base.ReservationService;
 import com.mytruenorthproject.campsite.service.base.SlotService;
 import com.mytruenorthproject.campsite.service.base.SlotsDataLoaderService;
@@ -38,6 +40,9 @@ public class CampsiteController {
 
     @Autowired
     SlotService slotService;
+
+    @Autowired
+    CampsiteService campsiteService;
 
     @GetMapping(value = "reservation/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<Resource<Reservation>> getReservation(@PathVariable() long id) {
@@ -77,6 +82,22 @@ public class CampsiteController {
                 ControllerLinkBuilder.methodOn(this.getClass()).getSlotAvailability(startDate, endDate)).withSelfRel();
         resource.add(selfLink);
         return new ResponseEntity<>(resource, HttpStatus.OK);
+    }
+
+    @PostMapping (value = "/{name}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Resource<Campsite>> createCampsite(@PathVariable() String name) {
+
+
+        Campsite campsite = campsiteService.createCampsite(name);
+        Resource<Campsite> resource = new Resource<>(campsite);
+
+        Link selfLink = ControllerLinkBuilder.linkTo(
+                ControllerLinkBuilder.methodOn(this.getClass()).createCampsite(name)).withSelfRel();
+        resource.add(selfLink);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(selfLink.getHref()));
+        return new ResponseEntity<>(resource,headers, HttpStatus.OK);
     }
 
     @PostMapping(value = "/slots/{campsiteId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

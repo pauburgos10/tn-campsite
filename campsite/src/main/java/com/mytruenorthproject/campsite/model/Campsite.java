@@ -25,8 +25,7 @@ public class Campsite implements Serializable {
     private Long id;
 
     @NotNull
-    @UniqueElements
-    @Column
+    @Column(unique = true)
     private String name;
 
     @OneToMany(cascade= CascadeType.ALL,mappedBy="campsite",fetch = FetchType.LAZY)
