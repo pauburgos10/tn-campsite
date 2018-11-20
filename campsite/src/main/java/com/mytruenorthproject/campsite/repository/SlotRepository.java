@@ -21,7 +21,7 @@ public interface SlotRepository extends CrudRepository<Slot, Long> {
     List<LocalDate> findDateByDateBetweenAndStatus(LocalDate startDate, LocalDate endDate, SlotStatus status);
 
     //@Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<List<Slot>> findByDate(LocalDate date);
+    Optional<Slot> findByDateAndCampsite(LocalDate date, Campsite campsite);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Set<Slot> findByDateBetweenAndStatusAndCampsite(LocalDate startDate, LocalDate endDate, SlotStatus status, Campsite campsite);

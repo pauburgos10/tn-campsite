@@ -133,9 +133,8 @@ public class CampsiteController {
     }
 
 
-    @PutMapping(value = "reservation/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Resource<Reservation>> updateReservation(
-            @PathVariable("id") long id, @RequestBody @Valid Reservation reservation) {
+    @PutMapping(value = "/reservation", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Resource<Reservation>> updateReservation(@RequestBody @Valid Reservation reservation) {
 
         Reservation updatedReservation = reservationService.updateReservation(reservation);
         Resource<Reservation> resource = new Resource<>(updatedReservation);

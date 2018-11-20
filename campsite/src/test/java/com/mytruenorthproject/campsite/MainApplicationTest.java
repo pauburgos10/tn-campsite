@@ -1,10 +1,7 @@
 package com.mytruenorthproject.campsite;
 
-import com.google.common.collect.Lists;
 import com.mytruenorthproject.campsite.model.Campsite;
-import com.mytruenorthproject.campsite.model.Reservation;
 import com.mytruenorthproject.campsite.repository.CampsiteRepository;
-import com.mytruenorthproject.campsite.service.base.CampsiteService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

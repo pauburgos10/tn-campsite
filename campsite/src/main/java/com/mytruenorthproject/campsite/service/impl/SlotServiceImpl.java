@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,12 +40,16 @@ public class SlotServiceImpl implements SlotService {
     }
 
     @Override
-    public List<Slot> getByDate(LocalDate date) {
-        Optional<List<Slot>> slots = slotRepository.findByDate(date);
-        if (!slots.isPresent()){
-            throw new RuntimeException("Slot not available");
+    public Slot getByDateAndCampsite(LocalDate date, Long id) {
+        Optional<Campsite> campsite = campsiteRepository.findById(id);
+        if (!campsite.isPresent()){
+            throw new RuntimeException("Campsite not found");
         }
-        return slots.get();
+        Optional<Slot> slot = slotRepository.findByDateAndCampsite(date, campsite.get());
+        if (!slot.isPresent()){
+            throw new RuntimeException("Slot not found");
+        }
+        return slot.get();
     }
 
     @Override
@@ -89,8 +94,20 @@ public class SlotServiceImpl implements SlotService {
 
         Set<Slot> slotSet = Sets.newHashSet(slots);
         slotSet.stream().forEach(slot -> slot.setCampsite(campsite.get()));
-        slotRepository.saveAll(slotSet);
-        return slotSet;
+
+        Set<Slot> saved = new HashSet<>();
+        try {
+            for(Slot slot : slotSet){
+                Optional<Slot> found = slotRepository.findByDateAndCampsite(slot.getDate(), campsite.get());
+                if (!found.isPresent()){
+                    Slot created = slotRepository.save(slot);
+                    saved.add(created);
+                }
+            }
+        } catch (Exception e){
+            throw new RuntimeException("Slots could not be added error:" + e.getMessage());
+        }
+        return saved;
     }
 
 
