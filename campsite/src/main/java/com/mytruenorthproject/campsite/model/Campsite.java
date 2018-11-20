@@ -25,6 +25,7 @@ public class Campsite implements Serializable {
     private Long id;
 
     @NotNull
+    @UniqueElements
     @Column
     private String name;
 

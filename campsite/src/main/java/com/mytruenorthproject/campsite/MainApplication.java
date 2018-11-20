@@ -22,10 +22,5 @@ public class MainApplication {
         SpringApplication.run(MainApplication.class, args);
     }
 
-    /*@Override
-    public void run(ApplicationArguments args) throws Exception {
-        slotsDataLoader.loadCampsiteDataForDemo();
-        slotsDataLoader.loadSlotsDataForDemo();
-    }*/
-    
+
 }

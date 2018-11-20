@@ -63,7 +63,7 @@ public class Reservation implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
-                    CascadeType.MERGE
+                    CascadeType.DETACH
             })
     @JoinTable(name = "slot_reservation_pairs",
             joinColumns = { @JoinColumn(name = "reservation_id") },
