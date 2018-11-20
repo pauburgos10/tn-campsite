@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface CampsiteRepository extends CrudRepository<Campsite, Long> {
 
+    Campsite findByName(String name);
+
 }
