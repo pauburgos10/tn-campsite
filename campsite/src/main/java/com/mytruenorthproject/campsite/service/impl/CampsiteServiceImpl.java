@@ -6,7 +6,6 @@ import com.mytruenorthproject.campsite.service.base.CampsiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ConstraintViolationException;
 
 @Service
 public class CampsiteServiceImpl implements CampsiteService {
